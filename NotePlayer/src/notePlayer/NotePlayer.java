@@ -27,7 +27,7 @@ public class NotePlayer
     		}
     		String noteName = noteSymbol.substring(0, noteSymbol.indexOf("_"));
     		int durationms = Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1));
-    		System.out.println("note name: " + noteName + ", duration: " + durationms);
+    		System.out.println("note letter: " + noteName + ", duration: " + durationms);
     	}
     	
     	main(args);
