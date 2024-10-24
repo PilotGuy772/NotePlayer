@@ -1,9 +1,13 @@
 package notePlayer;
 
 import core.MidiWrapper;
+import java.util.Scanner;
 
 public class NotePlayer
 {
+	
+	static final Scanner Console = new Scanner(System.in);
+	
     public static void main(String[] args)
     {
     	// This is where you will begin writing your code, and this is where the program will start.
@@ -11,6 +15,23 @@ public class NotePlayer
     	// separate your code into multiple helper methods.  Your main method should then call those
     	// helper methods at the right places.  Organizing your code like this makes your code easier
     	// to read and debug, and helps avoid duplicating code.  
+    	
+    	while(Console.hasNext())
+    	{
+    		
+    		String noteSymbol = Console.next();
+    		if (noteSymbol.equals("quit"))
+    		{
+    			System.out.println("\nThank you for enjoying NotePlayer! Goodbye!");
+    			return;
+    		}
+    		String noteName = noteSymbol.substring(0, noteSymbol.indexOf("_"));
+    		int durationms = Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1));
+    		System.out.println("note name: " + noteName + ", duration: " + durationms);
+    	}
+    	
+    	main(args);
+    	
     }
     
     
