@@ -18,8 +18,7 @@ public class NotePlayer
     	
     	System.out.print("Enter command or send \"quit\" > ");
     	
-    	String command = Console.nextLine();
-    	Scanner tokenReader = new Scanner(command);
+    	Scanner tokenReader = new Scanner(Console.nextLine());
     	
     	while(tokenReader.hasNext())
     	{
@@ -27,12 +26,13 @@ public class NotePlayer
     		String noteSymbol = tokenReader.next();
     		if (noteSymbol.equals("quit"))
     		{
-    			System.out.println("\nThank you for enjoying NotePlayer! Goodbye!");
+    			System.out.println("Thank you for enjoying NotePlayer! Goodbye!");
+    			tokenReader.close();
     			return;
     		}
     		String noteName = noteSymbol.substring(0, noteSymbol.indexOf("_"));
     		int durationms = Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1));
-    		System.out.println("\nnote letter: " + noteName + ", duration: " + durationms);
+    		System.out.println("note letter: " + noteName + ", duration: " + durationms);
     	}
     	
     	tokenReader.close();
