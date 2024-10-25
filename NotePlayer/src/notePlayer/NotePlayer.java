@@ -42,7 +42,7 @@ public class NotePlayer
     		}
     		String noteName = noteSymbol.substring(0, noteSymbol.indexOf("_")).toUpperCase();
     		int durationms = Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1));
-    		System.out.println("note letter: " + noteName + ", duration: " + durationms);
+    		playNote(noteNumber(noteName), durationms);
     	}
     	
     	tokenReader.close();
@@ -50,6 +50,41 @@ public class NotePlayer
     	
     	
     	return true;
+    }
+    
+    private static int noteNumber(String name)
+    {
+    	int number;
+    	switch(name.substring(0,1)) // take first character
+    	{
+    		case "C":
+    			number = 60;
+    			break;
+    		case "D":
+    			number = 62;
+    			break;
+    		case "E":
+    			number = 64;
+    			break;
+    		case "F":
+    			number = 65;
+    			break;
+    		case "G":
+    			number = 67;
+    			break;
+    		case "A":
+    			number = 69;
+    			break;
+    		case "B":
+    			number = 71;
+    			break;
+    		default:
+    			return -1;
+    	}
+    	
+    	if (name.length() == 1) return number;
+    	if (name.substring(1,2).equals("#")) return number + 1; // sharp advances a half step
+    	return number - 1; // only other option is flat, which goes down a half step.
     }
     
     
