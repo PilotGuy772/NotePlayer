@@ -16,10 +16,15 @@ public class NotePlayer
     	// helper methods at the right places.  Organizing your code like this makes your code easier
     	// to read and debug, and helps avoid duplicating code.  
     	
-    	while(Console.hasNext())
+    	System.out.print("\nEnter command or send \"quit\" > ");
+    	
+    	String command = Console.nextLine();
+    	Scanner tokenReader = new Scanner(command);
+    	
+    	while(tokenReader.hasNext())
     	{
     		
-    		String noteSymbol = Console.next();
+    		String noteSymbol = tokenReader.next();
     		if (noteSymbol.equals("quit"))
     		{
     			System.out.println("\nThank you for enjoying NotePlayer! Goodbye!");
@@ -30,6 +35,7 @@ public class NotePlayer
     		System.out.println("note letter: " + noteName + ", duration: " + durationms);
     	}
     	
+    	tokenReader.close();
     	main(args);
     	
     }
