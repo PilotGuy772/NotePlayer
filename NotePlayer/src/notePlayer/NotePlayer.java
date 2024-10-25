@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class NotePlayer
 {
 	
-	static final Scanner Console = new Scanner(System.in);
+	
 	
     public static void main(String[] args)
     {
@@ -16,39 +16,38 @@ public class NotePlayer
     	// helper methods at the right places.  Organizing your code like this makes your code easier
     	// to read and debug, and helps avoid duplicating code.  
     	
+    	Scanner console = new Scanner(System.in);
     	
-    	while (messageLoop()) {}
+    	while (messageLoop(console)) {}
     	
-    	Console.close();
-    	
+    	console.close();
+    	System.out.println("Thank you for enjoying NotePlayer! Goodbye!");
     }
     
-    private static boolean messageLoop()
+    private static boolean messageLoop(Scanner console)
     {
     	System.out.print("Enter command or send \"quit\" > ");
     	
-    	String command = Console.nextLine();
-//    	Scanner tokenReader = new Scanner(command);
-//    	System.out.println();
-//    	
-//    	while(tokenReader.hasNext())
-//    	{
-//    		
-//    		String noteSymbol = tokenReader.next();
-//    		if (noteSymbol.equals("quit"))
-//    		{
-//    			System.out.println("Thank you for enjoying NotePlayer! Goodbye!");
-//    			tokenReader.close();
-//    			return false;
-//    		}
-//    		String noteName = noteSymbol.substring(0, noteSymbol.indexOf("_"));
-//    		int durationms = Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1));
-//    		System.out.println("note letter: " + noteName + ", duration: " + durationms);
-//    	}
-//    	
-//    	tokenReader.close();
+    	Scanner tokenReader = new Scanner(console.nextLine());
+    	System.out.println();
     	
-    	System.out.println(command);
+    	while(tokenReader.hasNext())
+    	{
+    		
+    		String noteSymbol = tokenReader.next();
+    		if (noteSymbol.equals("quit"))
+    		{
+    			tokenReader.close();
+    			return false;
+    		}
+    		String noteName = noteSymbol.substring(0, noteSymbol.indexOf("_")).toUpperCase();
+    		int durationms = Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1));
+    		System.out.println("note letter: " + noteName + ", duration: " + durationms);
+    	}
+    	
+    	tokenReader.close();
+    	
+    	
     	
     	return true;
     }
