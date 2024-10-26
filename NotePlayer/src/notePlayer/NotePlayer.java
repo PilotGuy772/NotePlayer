@@ -123,7 +123,7 @@ public class NotePlayer
 			while (noteScanner.hasNext())
 			{
 				String noteSymbol = noteScanner.next();
-				String newNote = moveSteps(noteSymbol.substring(0, noteSymbol.indexOf("_")), transpose);
+				String newNote = getNoteFromNumber(noteNumber(noteSymbol.substring(0, noteSymbol.indexOf("_"))) + transpose);
 				int newDuration = (int) (Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1)) * tempo);
 				newInput = newInput + newNote + "_" + newDuration + " ";
 			}
@@ -458,6 +458,41 @@ public class NotePlayer
 			return note;
 		}
 		
+	}
+	
+	private static String getNoteFromNumber(int num)
+	{
+		// we know note numbers are calculated
+		// such that C0 = 60 and each half step
+		// advances the count by 1. We can use
+		// modulus to get the scale degree in
+		// the C Major scale.
+		// 60 % 12 = 0 = (C)
+		// 65 % 12 = 5 = C C# D D# (E)
+		// I would love to use an array for this,
+		// but a switch-case will do.
+		String note;
+		switch (num % 12)
+		{
+			case 0:  note = "C"; break;
+	        case 1:  note = "C#"; break;
+	        case 2:  note = "D"; break;
+	        case 3:  note = "D#"; break;
+	        case 4:  note = "E"; break;
+	        case 5:  note = "F"; break;
+	        case 6:  note = "F#"; break;
+	        case 7:  note = "G"; break;
+	        case 8:  note = "G#"; break;
+	        case 9:  note = "A"; break;
+	        case 10: note = "A#"; break;
+	        case 11: note = "B"; break;
+	        default: note = ""; break;
+		}
+		
+		// we also need the octave number specification
+		int octave = (int)Math.floor(num / 12) - 5;
+		
+		return octave == 0 ? note : note + octave;
 	}
 
 
