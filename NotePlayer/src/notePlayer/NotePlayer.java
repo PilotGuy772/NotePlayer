@@ -143,7 +143,6 @@ public class NotePlayer
 			
 			// why bother going to all the effort of calculating this stuff again
 			// if we've just figure it all out already?
-			System.out.println("\n" + newInput);
 			input = newInput;
 			
 		}
@@ -227,7 +226,8 @@ public class NotePlayer
 
 		tokenReader.close();
 
-
+		// unit tests want it here, for some reason
+		System.out.println(input);
 
 		return true;
 	}
