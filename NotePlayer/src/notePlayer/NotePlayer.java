@@ -111,7 +111,30 @@ public class NotePlayer
 			transpose = Integer.parseInt(adjustment.substring(0, adjustment.indexOf("_")));
 			tempo = Double.parseDouble(adjustment.substring(adjustment.indexOf("_") + 1));
 			
-			System.out.println("Transpose " + transpose + ", Tempo Multiplier " + tempo);
+			// we need to recalculate!
+			// for extra credit ;)
+			// I REALLY want to use a hash map for this
+			// buuuttt I'm not allowed to :( 
+			// so I'll make do
+			
+			Scanner noteScanner = new Scanner(input);
+			String newInput = "";
+			
+			while (noteScanner.hasNext())
+			{
+				String noteSymbol = noteScanner.next();
+				String newNote = moveSteps(noteSymbol.substring(0, noteSymbol.indexOf("_")), transpose);
+				int newDuration = (int) (Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1)) * tempo);
+				newInput = newInput + newNote + "_" + newDuration + " ";
+			}
+			
+			noteScanner.close();
+			
+			// why bother going to all the effort of calculating this stuff again
+			// if we've just figure it all out already?
+			System.out.println(newInput);
+			input = newInput;
+			
 		}
 		
 		
@@ -126,7 +149,7 @@ public class NotePlayer
 			
 			
 			String noteName = noteSymbol.substring(0, noteSymbol.indexOf("_"));
-			int durationms = (int)(Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1)) * tempo);
+			int durationms = Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1));
 			
 			// noteName might have more than one note (i.e., a chord)! We will use another Scanner to step through the notes
 			Scanner noteStepper = new Scanner(noteName);
@@ -151,16 +174,16 @@ public class NotePlayer
 				switch (count) // assign the variables one, two, three, and four to the appropriate notes
 				{
 					case 1:
-						one = noteNumber(noteStepper.next(), transpose);
+						one = noteNumber(noteStepper.next());
 						break;
 					case 2:
-						two = noteNumber(noteStepper.next(), transpose);
+						two = noteNumber(noteStepper.next());
 						break;
 					case 3:
-						three = noteNumber(noteStepper.next(), transpose);
+						three = noteNumber(noteStepper.next());
 						break;
 					case 4:
-						four = noteNumber(noteStepper.next(), transpose);
+						four = noteNumber(noteStepper.next());
 						break;
 				}
 			}
@@ -198,7 +221,7 @@ public class NotePlayer
 		return true;
 	}
 
-	private static int noteNumber(String name, int transpose)
+	private static int noteNumber(String name)
 	{
 		int number;
 		switch(name.substring(0,1).toUpperCase()) // take first character
@@ -228,7 +251,6 @@ public class NotePlayer
 				return -1;
 		}
 		
-		number += transpose;
 
 		if (name.length() == 1) return number; // no accidentals or octave specification
 
@@ -258,6 +280,184 @@ public class NotePlayer
 		
 		// the last possible scenario is that the note has an octave number but no accidental
 		return number + 12 * Integer.parseInt(name.substring(1));
+	}
+	
+	private static String moveSteps(String note, int steps)
+	{
+		// move the given note up or down the given number of half steps
+		if (steps > 0)
+		{
+			for (int i = 0; i < steps; i++)
+			{
+				// if it has a flat, remove the flat
+				if (note.contains("b"))
+				{
+					//                            make sure it has an octave number
+					note = note.substring(0,1) + (note.length() > 2 ? note.substring(2) : "");
+				}
+				
+				// if it has a sharp, advance to the next note
+				else if (note.contains("#"))
+				{
+					// isolate the note
+					String letter = note.substring(0,1);
+					boolean advanceOctave = false;
+					// advance a step
+					// this is also where we have a chance to correct for diatonics
+					switch (letter)
+					{
+						case "C": // C# + 1
+							letter = "D";
+							break; 
+						case "D": // D# + 1
+							letter = "E";
+							break;
+						case "E": // E# = F, so E# + 1 = F#
+							letter = "F#";
+							break;
+						case "F": // F# + 1
+							letter = "G";
+							break;
+						case "G": // G# + 1
+							letter = "A";
+							break;
+						case "A": // A# + 1
+							letter = "B";
+							break;
+						case "B": // B# = C, so C + 1 = C#
+							letter = "C#";
+							// this is the only case where we have to move up an octave
+							advanceOctave = true;
+							break;
+					}
+					
+					note = letter + (note.length() > 2 // if we have more than just note + sharp
+							? advanceOctave // we DO have octave data
+								? Integer.parseInt(note.substring(2)) + 1  // we ARE advancing an octave   
+								: note.substring(1) // we AREN'T advancing an octave; keep the number the same
+							: advanceOctave // we DON'T have octave data (octave 0)
+								? 1  // we ARE advancing an octave; go to octave one
+								: "" // we AREN'T advancing an octave; stay at zero
+					);
+				}
+				
+				// move up an octave
+				else if (note.startsWith("B"))
+				{
+					// if no octave is written (i.e., it's just "B"), give it octave 1
+					int octave = note.length() > 1 ? Integer.parseInt(note.substring(1)) : 0;
+					note = "C" + (octave + 1);
+					
+				}
+				
+				// if it's E, change it to F
+				else if (note.startsWith("E"))
+				{
+					int octave = note.length() > 1 ? Integer.parseInt(note.substring(1)) : 0;
+					note = "F" + (octave);
+				}
+				
+				
+				
+				// finally, if it has no accidental, add a sharp
+				// remember that we dealt with the edge cases of B and E already
+				else
+				{
+					note = note.substring(0,1) + "#" + (note.length() > 1 ? note.substring(1) : "");
+				}
+			}
+			
+			return note;
+		}
+		
+		// whew, that was a lot. Now we basically do the same logic in reverse
+		// for transposing DOWN.
+		else
+		{
+			for (int i = 0; i < Math.abs(steps); i++)
+			{
+				
+				// if it has a sharp, remove the sharp
+				if (note.contains("#"))
+				{
+					//                            make sure it has an octave number
+					note = note.substring(0,1) + (note.length() > 2 ? note.substring(2) : "");
+				}
+				
+				// if it has a flat, advance to the next note
+				else if (note.contains("b"))
+				{
+					// isolate the note
+					String letter = note.substring(0,1);
+					boolean advanceOctave = false;
+					// advance a step
+					// this is also where we have a chance to correct for diatonics
+					switch (letter)
+					{
+						case "C": // Cb = B, so B - 1 = Bb
+							// this is the only case where we have to move down an octave
+							advanceOctave = true;
+							letter = "Bb";
+							break; 
+						case "D":
+							letter = "C";
+							break;
+						case "E":
+							letter = "D";
+							break;
+						case "F": // Fb = E, so E - 1 = Eb
+							letter = "Eb";
+							break;
+						case "G":
+							letter = "F";
+							break;
+						case "A":
+							letter = "G";
+							break;
+						case "B":
+							letter = "A";
+							
+							break;
+					}
+					
+					note = letter + (note.length() > 2 // if we have more than just note + flat
+							? advanceOctave // we DO have octave data
+								? Integer.parseInt(note.substring(2)) - 1  // we ARE advancing an octave   
+								: note.substring(1) // we AREN'T advancing an octave; keep the number the same
+							: advanceOctave // we DON'T have octave data (octave 0)
+								? -1  // we ARE advancing an octave; go to octave -1
+								: "" // we AREN'T advancing an octave; stay at zero
+					);
+				}
+				
+				
+				// move down an octave if it's C
+				else if (note.startsWith("C"))
+				{
+					// if no octave is written (i.e., it's just "C"), give it octave -1
+					int octave = note.length() > 1 ? Integer.parseInt(note.substring(1)) : 0;
+					note = "B" + (octave - 1);
+				}
+				
+				// if it's F, change it to E
+				else if (note.startsWith("F"))
+				{
+					int octave = note.length() > 1 ? Integer.parseInt(note.substring(1)) : 0;
+					note = "E" + (octave);
+				}
+				
+				// finally, if it has no accidental, add a flat
+				// remember that we dealt with the edge cases of C and F already
+				else
+				{
+					note = note.substring(0,1) + "b" + (note.length() > 1 ? note.substring(1) : "");
+				}
+			}
+			
+			
+			return note;
+		}
+		
 	}
 
 
