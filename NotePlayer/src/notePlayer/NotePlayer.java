@@ -125,11 +125,70 @@ public class NotePlayer
 			String noteSymbol = tokenReader.next();
 			
 			
-			
-			
 			String noteName = noteSymbol.substring(0, noteSymbol.indexOf("_"));
-			int durationms = Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1));
-			playNote(noteNumber(noteName, transpose), (int)(durationms * tempo));
+			int durationms = (int)(Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1)) * tempo);
+			
+			// noteName might have more than one note (i.e., a chord)! We will use another Scanner to step through the notes
+			Scanner noteStepper = new Scanner(noteName);
+			// this regex will match if the character immediately following a given index is
+			// between A and G. This is called a "positive lookahead." It will "look ahead" 
+			// for the given sequence and match if the given sequence exists following
+			// a particular index. Importantly, this does NOT consume the characters that
+			// are responsible for causing it to match. Basically, this preserves the note 
+			// name that starts the sequence.
+			noteStepper.useDelimiter("(?=[A-G])");
+			
+			// again, super inelegant, but I'm not allowed to use arrays so
+			int one = 0;
+			int two = 0;
+			int three = 0;
+			int four = 0;
+			int count = 0;
+			
+			while (noteStepper.hasNext())
+			{
+				count++; // keep track of how many valid notes there are
+				switch (count) // assign the variables one, two, three, and four to the appropriate notes
+				{
+					case 1:
+						one = noteNumber(noteStepper.next(), transpose);
+						break;
+					case 2:
+						two = noteNumber(noteStepper.next(), transpose);
+						break;
+					case 3:
+						three = noteNumber(noteStepper.next(), transpose);
+						break;
+					case 4:
+						four = noteNumber(noteStepper.next(), transpose);
+						break;
+				}
+			}
+			
+			
+			
+			noteStepper.close();
+			
+			// and call the appropriate function based on the count
+			switch(count)
+			{
+				case 1:
+					playNote(one, durationms);
+					break;
+				case 2:
+					MidiWrapper.playTwoNoteChord(one, two, durationms);
+					break;
+				case 3:
+					MidiWrapper.playThreeNoteChord(one, two, three, durationms);
+					break;
+				case 4:
+					MidiWrapper.playFourNoteChord(one, two, three, four, durationms);
+					break;
+			}
+			
+			
+			
+			
 		}
 
 		tokenReader.close();
