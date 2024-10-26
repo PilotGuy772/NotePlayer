@@ -39,7 +39,7 @@ public class NotePlayer
 				tokenReader.close();
 				return false;
 			}
-			String noteName = noteSymbol.substring(0, noteSymbol.indexOf("_")).toUpperCase();
+			String noteName = noteSymbol.substring(0, noteSymbol.indexOf("_"));
 			int durationms = Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1));
 			playNote(noteNumber(noteName), durationms);
 		}
@@ -54,7 +54,7 @@ public class NotePlayer
 	private static int noteNumber(String name)
 	{
 		int number;
-		switch(name.substring(0,1)) // take first character
+		switch(name.substring(0,1).toUpperCase()) // take first character
 		{
 			case "C":
 				number = 60;
