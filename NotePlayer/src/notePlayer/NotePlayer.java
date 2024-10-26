@@ -326,7 +326,7 @@ public class NotePlayer
 		// we also need the octave number specification
 		int octave = (int)Math.floor(num / 12) - 5;
 		
-		return octave == 0 ? note : note + octave;
+		return note + octave;
 	}
 
 
