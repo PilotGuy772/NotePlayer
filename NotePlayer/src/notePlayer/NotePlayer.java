@@ -5,102 +5,126 @@ import java.util.Scanner;
 
 public class NotePlayer
 {
-	
-	
-	
-    public static void main(String[] args)
-    {
-    	// This is where you will begin writing your code, and this is where the program will start.
-    	// Although you can place all of your code here in main, we strongly suggest that you
-    	// separate your code into multiple helper methods.  Your main method should then call those
-    	// helper methods at the right places.  Organizing your code like this makes your code easier
-    	// to read and debug, and helps avoid duplicating code.  
-    	
-    	Scanner console = new Scanner(System.in);
-    	
-    	while (messageLoop(console)) {}
-    	
-    	console.close();
-    	System.out.println("Thank you for enjoying NotePlayer! Goodbye!");
-    }
-    
-    private static boolean messageLoop(Scanner console)
-    {
-    	System.out.print("Enter command or send \"quit\" > ");
-    	
-    	Scanner tokenReader = new Scanner(console.nextLine());
-    	System.out.println();
-    	
-    	while(tokenReader.hasNext())
-    	{
-    		
-    		String noteSymbol = tokenReader.next();
-    		if (noteSymbol.equals("quit"))
-    		{
-    			tokenReader.close();
-    			return false;
-    		}
-    		String noteName = noteSymbol.substring(0, noteSymbol.indexOf("_")).toUpperCase();
-    		int durationms = Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1));
-    		playNote(noteNumber(noteName), durationms);
-    	}
-    	
-    	tokenReader.close();
-    	
-    	
-    	
-    	return true;
-    }
-    
-    private static int noteNumber(String name)
-    {
-    	int number;
-    	switch(name.substring(0,1)) // take first character
-    	{
-    		case "C":
-    			number = 60;
-    			break;
-    		case "D":
-    			number = 62;
-    			break;
-    		case "E":
-    			number = 64;
-    			break;
-    		case "F":
-    			number = 65;
-    			break;
-    		case "G":
-    			number = 67;
-    			break;
-    		case "A":
-    			number = 69;
-    			break;
-    		case "B":
-    			number = 71;
-    			break;
-    		default:
-    			return -1;
-    	}
-    	
-    	if (name.length() == 1) return number;
-    	if (name.substring(1,2).equals("#")) return number + 1; // sharp advances a half step
-    	return number - 1; // only other option is flat, which goes down a half step.
-    }
-    
-    
-    // You may choose to add extra helper methods here to break up your code into
-    // smaller, reusable chunks
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+	public static void main(String[] args)
+	{
+		// This is where you will begin writing your code, and this is where the program will start.
+		// Although you can place all of your code here in main, we strongly suggest that you
+		// separate your code into multiple helper methods.  Your main method should then call those
+		// helper methods at the right places.  Organizing your code like this makes your code easier
+		// to read and debug, and helps avoid duplicating code.  
+
+		Scanner console = new Scanner(System.in);
+
+		while (messageLoop(console)) {}
+
+		console.close();
+		System.out.println("Thank you for enjoying NotePlayer! Goodbye!");
+	}
+
+	private static boolean messageLoop(Scanner console)
+	{
+		System.out.print("Enter command or send \"quit\" > ");
+
+		Scanner tokenReader = new Scanner(console.nextLine());
+
+		while(tokenReader.hasNext())
+		{
+
+			String noteSymbol = tokenReader.next();
+			if (noteSymbol.equals("quit"))
+			{
+				tokenReader.close();
+				return false;
+			}
+			String noteName = noteSymbol.substring(0, noteSymbol.indexOf("_")).toUpperCase();
+			int durationms = Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1));
+			playNote(noteNumber(noteName), durationms);
+		}
+
+		tokenReader.close();
+
+
+
+		return true;
+	}
+
+	private static int noteNumber(String name)
+	{
+		int number;
+		switch(name.substring(0,1)) // take first character
+		{
+			case "C":
+				number = 60;
+				break;
+			case "D":
+				number = 62;
+				break;
+			case "E":
+				number = 64;
+				break;
+			case "F":
+				number = 65;
+				break;
+			case "G":
+				number = 67;
+				break;
+			case "A":
+				number = 69;
+				break;
+			case "B":
+				number = 71;
+				break;
+			default:
+				return -1;
+		}
+
+		if (name.length() == 1) return number; // no accidentals or octave specification
+
+		if (name.substring(1,2).equals("#"))
+		{
+			number++;
+			
+			// if the note symbol has three or more characters,
+			// parse the rest into an int and multiply the result by 12
+			return name.length() >= 3 
+					? number + 12 * Integer.parseInt(name.substring(2)) 
+					: number;
+			
+			
+		}
+		
+		if (name.substring(1,2).equals("b"))
+		{
+			number--;
+			
+			// copied from above
+			// I wish there was a better way but I think this is the most efficient
+			return name.length() >= 3 
+					? number + 12 * Integer.parseInt(name.substring(2)) 
+					: number;
+		}
+		
+		// the last possible scenario is that the note has an octave number but no accidental
+		return number + 12 * Integer.parseInt(name.substring(1));
+	}
+
+
+	// You may choose to add extra helper methods here to break up your code into
+	// smaller, reusable chunks
+
+
+
+
+
+
+
+
+
+
+
 	//                      .d"""" """$$$$be.
 	//                    -"           ^""**$$$e.
 	//                  ."                   '$$$c
@@ -132,7 +156,7 @@ public class NotePlayer
 	//         ^*$E")$..$"                         *   .ee==d%
 	//            $.d$$$*                           *  J$$$e*
 	//             """""                              "$$$"
-	
+
 	// WWWWWWWW                           WWWWWWWW                                                      iiii                                        !!!  !!!  !!! 
 	// W::::::W                           W::::::W                                                     i::::i                                      !!:!!!!:!!!!:!!
 	// W::::::W                           W::::::W                                                      iiii                                       !:::!!:::!!:::!
@@ -156,29 +180,29 @@ public class NotePlayer
 	//                                                                                                                           gg:::::::::::::g                 
 	//                                                                                                                             ggg::::::ggg                   
 	//                                                                                                                                gggggg                         
-    
-    // WARNING!!!!  You will CALL these methods, but you MUST NOT MODIFY any
-    // of the code below
-    
 
-    /**
-     * WARNING!!!  DO NOT MODIFY THIS METHOD.
-     * 
-     * Once you have calculated the MIDI note number and its duration, call this
-     * method to play that note.
-     * 
-     * @param noteNumber The MIDI note number, as described in the spec.
-     * @param durationMs The number of milliseconds to play the note.  A larger number will play the note for a longer time.
-     */
-    public static void playNote(int noteNumber, int durationMs)
-    {
-    	// WARNING!!!  DO NOT MODIFY THIS METHOD.
-        MidiWrapper.playNote(noteNumber, durationMs);
-    }
-    
-    
-    
-    
+	// WARNING!!!!  You will CALL these methods, but you MUST NOT MODIFY any
+	// of the code below
+
+
+	/**
+	 * WARNING!!!  DO NOT MODIFY THIS METHOD.
+	 * 
+	 * Once you have calculated the MIDI note number and its duration, call this
+	 * method to play that note.
+	 * 
+	 * @param noteNumber The MIDI note number, as described in the spec.
+	 * @param durationMs The number of milliseconds to play the note.  A larger number will play the note for a longer time.
+	 */
+	public static void playNote(int noteNumber, int durationMs)
+	{
+		// WARNING!!!  DO NOT MODIFY THIS METHOD.
+		MidiWrapper.playNote(noteNumber, durationMs);
+	}
+
+
+
+
 	/**
 	 * WARNING!!!  DO NOT MODIFY THIS METHOD.
 	 * 
@@ -192,5 +216,5 @@ public class NotePlayer
 		// WARNING!!!  DO NOT MODIFY THIS METHOD.
 		MidiWrapper.setInstrument(instrumentNumber);
 	}
-    
+
 }
