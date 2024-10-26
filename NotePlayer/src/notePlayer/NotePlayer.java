@@ -7,6 +7,35 @@ public class NotePlayer
 {
 
 
+	private static final String InstrumentList =
+			"0: Piano 1        1: Piano 2        2: Piano 3        3: Honky-tonk     4: E.Piano 1\r\n"
+			+ "5: E.Piano 2      6: Harpsichord    7: Clav.          8: Celesta        9: Glockenspiel\r\n"
+			+ "10: Music Box     11: Vibraphone    12: Marimba       13: Xylophone     14: Tubular-bell\r\n"
+			+ "15: Santur        16: Organ 1       17: Organ 2       18: Organ 3       19: Church Org.1\r\n"
+			+ "20: Reed Organ    21: Accordion Fr  22: Harmonica     23: Bandoneon     24: Nylon-str.Gt\r\n"
+			+ "25: Steel-str.Gt  26: Jazz Gt.      27: Clean Gt.     28: Muted Gt.     29: Overdrive Gt\r\n"
+			+ "30: DistortionGt  31: Gt.Harmonics  32: Acoustic Bs.  33: Fingered Bs.  34: Picked Bs.\r\n"
+			+ "35: Fretless Bs.  36: Slap Bass 1   37: Slap Bass 2   38: Synth Bass 1  39: Synth Bass 2\r\n"
+			+ "40: Violin        41: Viola         42: Cello         43: Contrabass    44: Tremolo Str\r\n"
+			+ "45: PizzicatoStr  46: Harp          47: Timpani       48: Strings       49: Slow Strings\r\n"
+			+ "50: Syn.Strings1  51: Syn.Strings2  52: Choir Aahs    53: Voice Oohs    54: SynVox\r\n"
+			+ "55: OrchestraHit  56: Trumpet       57: Trombone      58: Tuba          59: MutedTrumpet\r\n"
+			+ "60: French Horns  61: Brass 1       62: Synth Brass1  63: Synth Brass2  64: Soprano Sax\r\n"
+			+ "65: Alto Sax      66: Tenor Sax     67: Baritone Sax  68: Oboe          69: English Horn\r\n"
+			+ "70: Bassoon       71: Clarinet      72: Piccolo       73: Flute         74: Recorder\r\n"
+			+ "75: Pan Flute     76: Bottle Blow   77: Shakuhachi    78: Whistle       79: Ocarina\r\n"
+			+ "80: Square Wave   81: Saw Wave      82: Syn.Calliope  83: Chiffer Lead  84: Charang\r\n"
+			+ "85: Solo Vox      86: 5th Saw Wave  87: Bass & Lead   88: Fantasia      89: Warm Pad\r\n"
+			+ "90: Polysynth     91: Space Voice   92: Bowed Glass   93: Metal Pad     94: Halo Pad\r\n"
+			+ "95: Sweep Pad     96: Ice Rain      97: Soundtrack    98: Crystal       99: Atmosphere\r\n"
+			+ "100: Brightness   101: Goblin       102: Echo Drops   103: Star Theme   104: Sitar\r\n"
+			+ "105: Banjo        106: Shamisen     107: Koto         108: Kalimba      109: Bagpipe\r\n"
+			+ "110: Fiddle       111: Shanai       112: Tinkle Bell  113: Agogo        114: Steel Drums\r\n"
+			+ "115: Woodblock    116: Taiko        117: Melo. Tom 1  118: Synth Drum   119: Reverse Cym.\r\n"
+			+ "120: Gt.FretNoise 121: Breath Noise 122: Seashore     123: Bird         124: Telephone 1\r\n"
+			+ "125: Helicopter   126: Applause     127: Gun Shot";
+	
+	
 
 	public static void main(String[] args)
 	{
@@ -28,20 +57,79 @@ public class NotePlayer
 	{
 		System.out.print("Enter command or send \"quit\" > ");
 
-		Scanner tokenReader = new Scanner(console.nextLine());
+		String input = console.nextLine();
+		
 
+		
+		// SPECIAL COMMANDS //
+		
+		// quit
+		if (input.equals("quit"))
+		{
+			return false;
+		}
+		
+		// `list instruments`
+		if (input.equals("list instruments"))
+		{
+			System.out.println(InstrumentList);
+			return true;
+		}
+		
+		// `set instrument <>`
+		if (input.startsWith("set instrument "))
+		{
+			// this is rather inelegant I admit
+			// but we are supposed to have zero tolerance for
+			// malformed inputs and no exception handling,
+			// so I'll let it slide for now
+			setInstrument(Integer.parseInt(input.substring(15)));
+			return true;
+		}
+		
+		// NOTE to Mr. George...
+		/*
+		 * I feel like the commands for listing and setting
+		 * instruments really ought to be in the form
+		 * `instrument list` and `instrument set`...
+		 * in CLIs the standard form is to have a command
+		 * (i.e., `git`), a sub-command (i.e., `remote`)
+		 * and then maybe more sub-commands (i.e., `add`).
+		 * So, in following the standard model, shouldn't we
+		 * group instrument-related commands under one `instrument`
+		 * sub-command with further sub-commands of `list` and `set`?
+		 * */
+		
+		// check for playback adjustment
+		int commaPos = input.indexOf(",");
+		int transpose = 0;
+		double tempo = 1.0;
+		if (commaPos != -1)
+		{
+			String adjustment = input.substring(0, commaPos);
+			input = input.substring(commaPos + 1);
+			transpose = Integer.parseInt(adjustment.substring(0, adjustment.indexOf("_")));
+			tempo = Double.parseDouble(adjustment.substring(adjustment.indexOf("_") + 1));
+			
+			System.out.println("Transpose " + transpose + ", Tempo Multiplier " + tempo);
+		}
+		
+		
+		Scanner tokenReader = new Scanner(input);
+
+		
+		
 		while(tokenReader.hasNext())
 		{
 
 			String noteSymbol = tokenReader.next();
-			if (noteSymbol.equals("quit"))
-			{
-				tokenReader.close();
-				return false;
-			}
+			
+			
+			
+			
 			String noteName = noteSymbol.substring(0, noteSymbol.indexOf("_"));
 			int durationms = Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1));
-			playNote(noteNumber(noteName), durationms);
+			playNote(noteNumber(noteName, transpose), (int)(durationms * tempo));
 		}
 
 		tokenReader.close();
@@ -51,7 +139,7 @@ public class NotePlayer
 		return true;
 	}
 
-	private static int noteNumber(String name)
+	private static int noteNumber(String name, int transpose)
 	{
 		int number;
 		switch(name.substring(0,1).toUpperCase()) // take first character
@@ -80,6 +168,8 @@ public class NotePlayer
 			default:
 				return -1;
 		}
+		
+		number += transpose;
 
 		if (name.length() == 1) return number; // no accidentals or octave specification
 
@@ -89,9 +179,9 @@ public class NotePlayer
 			
 			// if the note symbol has three or more characters,
 			// parse the rest into an int and multiply the result by 12
-			return name.length() >= 3 
-					? number + 12 * Integer.parseInt(name.substring(2)) 
-					: number;
+			return name.length() >= 3                                   // if more than two characters (i.e., C (1) # (2) 5 (3))
+					? number + 12 * Integer.parseInt(name.substring(2)) // that must mean there's an octave number... so we have to add 12 * the number (per the spec)
+					: number;                                           // otherwise, we make no change and just return the number as it is
 			
 			
 		}
