@@ -38,3 +38,19 @@ one command, then send `G_500` in the next, the line written to the file will be
 the file instead of the original and the adjustments.
 
 Again, the point of this is to have an easier way to workshop a song and save it somewhere more convenient when you're done with it.
+
+### ⛔ Meter
+
+Add a mode for playing notes in meter as opposed to specifying duration in milliseconds. Use the command `meter on` to switch to meter mode. Now, the syntax for adjustments has changed. Adjustments will follow the syntax of `[transposition]_[tempo bpm]_[time]/[signature]`. `transposition` remains unchanged. `tempo bpm` now represents the tempo in beats per minute (duh). The last token, `time/signature` represents the time signature for the piece. The left half of the slash represents the number of beats per measure, and the right half represents the value of a single beat. `4/4` is four beats per measure with each beat having one quarter note. `6/8` is six beats per measure with each beat having an eighth note. You get the idea. When adjustments are omitted, the default tempo is 60 and the default meter is 4/4.
+
+When in meter mode, the `duration` portion of a note symbol no longer represents its duration in milliseconds; instead, it represents the note's value. Here's some examples:
+* Note value `4` in meter `4/4` at 60bpm. This is simple. A quarter note represents one beat. At 60bpm, this means 1000ms.
+* Note value `2` in meter `4/4` at 60bpm. A half note is 4 / 2 = 2 beats. This note would be 2 * 1000 = 2000ms.
+
+It gets more complicated when we introduce ties. We need to have support for more complex rhythms, which may be introduced by tying notes. If we want a single note to have a value of three quarter notes, we would need to tie a half note and a quarter note. In order to do this, we extend the syntax further with a dash. In meter mode, NotePlayer will recognize multiple note values tied together with a dash and sum the values together in order to play one note for the duration of the tied note. For example, `C_2-4` plays a C for the total value of three quarter notes. Likewise, `C_1-2-4-8` plays a C for the value of a measure and a half plus a dotted quarter note. There are no restrictions on this-- the code just dumbly adds the durations for each of the values.
+
+Here is a full example of a valid command in meter mode.
+
+`0_120_4/4,C_4-8 D_8 E_8 E_8 F_8 F_8 G_2-4 A_4 B_4 C1_1`
+
+This plays a goofy C major scale with some dotted rhythms.
