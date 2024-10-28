@@ -104,48 +104,52 @@ public class NotePlayer
 		int commaPos = input.indexOf(",");
 		int transpose = 0;
 		double tempo = 1.0;
+		// a comma is present
 		if (commaPos != -1)
 		{
 			String adjustment = input.substring(0, commaPos);
 			input = input.substring(commaPos + 1);
 			transpose = Integer.parseInt(adjustment.substring(0, adjustment.indexOf("_")));
 			tempo = Double.parseDouble(adjustment.substring(adjustment.indexOf("_") + 1));
-			
-			// we need to recalculate!
-			// for extra credit ;)
+		}
 		
-			Scanner noteScanner = new Scanner(input);
-			String newInput = "";
+		// we need to recalculate!
+		// for extra credit ;)
+		// NOTE: moved this outside of the
+		// above if statement because there
+		// might be diatonics to account for...
+		
+	
+		Scanner noteScanner = new Scanner(input);
+		String newInput = "";
+		
+		while (noteScanner.hasNext())
+		{
+			String noteSymbol = noteScanner.next();
 			
-			while (noteScanner.hasNext())
+			// we might have a chord!!
+			// so let's pull the scanner trick from further down
+			// to iterate through and maintain a string representing the
+			// updated notes to date
+			String newNotes = "";
+			Scanner noteStepper = new Scanner(noteSymbol.substring(0, noteSymbol.indexOf("_")));
+			noteStepper.useDelimiter("(?=[A-G])");
+			while (noteStepper.hasNext())
 			{
-				String noteSymbol = noteScanner.next();
-				
-				// we might have a chord!!
-				// so let's pull the scanner trick from further down
-				// to iterate through and maintain a string representing the
-				// updated notes to date
-				String newNotes = "";
-				Scanner noteStepper = new Scanner(noteSymbol.substring(0, noteSymbol.indexOf("_")));
-				noteStepper.useDelimiter("(?=[A-G])");
-				while (noteStepper.hasNext())
-				{
-					newNotes += getNoteFromNumber(noteNumber(noteStepper.next()) + transpose);
-				}
-				
-				int newDuration = (int) (Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1)) * tempo);
-				
-				
-				newInput = newInput + newNotes + "_" + newDuration + " ";
+				newNotes += getNoteFromNumber(noteNumber(noteStepper.next()) + transpose);
 			}
 			
-			noteScanner.close();
+			int newDuration = (int) (Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1)) * tempo);
 			
-			// why bother going to all the effort of calculating this stuff again
-			// if we've just figure it all out already?
-			input = newInput;
 			
+			newInput = newInput + newNotes + "_" + newDuration + " ";
 		}
+		
+		noteScanner.close();
+		
+		// why bother going to all the effort of calculating this stuff again
+		// if we've just figure it all out already?
+		input = newInput;
 		
 		
 		Scanner tokenReader = new Scanner(input);
