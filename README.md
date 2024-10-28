@@ -1,4 +1,8 @@
 # Note Player
+
+*Attention Mr. George!*
+I am going to start breaking the rules in this project!!! Revision 4705e21 is the latest one that I can guarantee will follow all the class rules; that one should be my final submission on BuildCI as well.
+
 This is my NotePlayer project for my AP Computer Science A course. It's a simple Java program that uses `javax.sound.midi` to play notes using MIDI by interpreting a goofy syntax in a console interface.
 
 ## Syntax
