@@ -34,7 +34,9 @@ public class NotePlayer
 			+ "115: Woodblock    116: Taiko        117: Melo. Tom 1  118: Synth Drum   119: Reverse Cym.\n"
 			+ "120: Gt.FretNoise 121: Breath Noise 122: Seashore     123: Bird         124: Telephone 1\n"
 			+ "125: Helicopter   126: Applause     127: Gun Shot";
+
 	
+	private static String LastInput = "";
 	
 
 	public static void main(String[] args)
@@ -58,7 +60,8 @@ public class NotePlayer
 		System.out.print("Enter command or send \"quit\" > ");
 
 		String input = console.nextLine();
-		
+		// save this to the lastInput field right away
+		LastInput = input;
 
 		
 		// SPECIAL COMMANDS //
@@ -85,6 +88,32 @@ public class NotePlayer
 			// so I'll let it slide for now
 			setInstrument(Integer.parseInt(input.substring(15)));
 			return true;
+		}
+		
+		// commands for saving and playing premade songs
+		if (input.startsWith("song "))
+		{
+			// if we want to save the last song to a file
+			if (input.startsWith("song save"))
+			{
+				// not very elegant but it should work
+				// this will take two positional parameters
+				// song save (name) (file)
+				// both are optional
+				String[] args = input.split(" ");
+				String name = "";
+				String path = "";
+				if (args.length == 2)
+				{
+					// use defaults
+					name = "My Song";
+					path = "./song.txt";
+				}
+				if (args.length == 3)
+				{
+					
+				}
+			}
 		}
 		
 		// NOTE to Mr. George...
@@ -138,6 +167,7 @@ public class NotePlayer
 			{
 				newNotes += getNoteFromNumber(noteNumber(noteStepper.next()) + transpose);
 			}
+			noteStepper.close();
 			
 			int newDuration = (int) (Integer.parseInt(noteSymbol.substring(noteSymbol.indexOf("_") + 1)) * tempo);
 			
